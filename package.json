@@ -1,40 +1,25 @@
 {
   "name": "naver-scraper-api",
   "version": "1.0.0",
-  "description": "Scalable Naver Shopping scraper API",
-  "main": "dist/server.js",
+  "type": "module",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "dev:watch": "tsc -w",
-    "test:load": "tsx src/load-test.ts",
-    "lint": "eslint src/**/*.ts",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist || rmdir /s /q dist"
   },
   "dependencies": {
-    "bottleneck": "^2.19.5",
-    "dotenv": "^16.6.1",
-    "fastify": "^4.29.1",
-    "p-limit": "^5.0.0",
-    "pino-pretty": "^13.1.1",
-    "rotating-file-stream": "^3.1.1",
-    "undici": "^6.21.3",
-    "zod": "^3.25.76"
+    "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "got": "^14.4.2",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.5",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2"
   },
   "devDependencies": {
-    "@types/node": "^20.19.11",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.57.1",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module"
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4"
+  }
 }

@@ -3,11 +3,11 @@
     "target": "ES2022",
     "module": "node18",
     "moduleResolution": "node16",
+    "outDir": "dist",
     "strict": true,
-    "exactOptionalPropertyTypes": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist",
     "resolveJsonModule": true
-  }
+  },
+  "include": ["src"]
 }
