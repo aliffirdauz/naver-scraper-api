@@ -3,17 +3,17 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { buildNaverHeaders } from './headers.js';
 
-const MAX_RETRIES = Number(process.env.MAX_RETRIES ?? 3);
+const MAX_RETRIES = Number(process.env.MAX_RETRIES ?? 4);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS ?? 30000);
 const MIN_DELAY_MS = Number(process.env.MIN_DELAY_MS ?? 500);
-const MAX_DELAY_MS = Number(process.env.MAX_DELAY_MS ?? 1500);
+const MAX_DELAY_MS = Number(process.env.MAX_DELAY_MS ?? 2500);
 
 function sleep(ms: number) { return new Promise(res => setTimeout(res, ms)); }
-function jitter(minMs = MIN_DELAY_MS, maxMs = MAX_DELAY_MS) {
-  return Math.floor(minMs + Math.random() * (maxMs - minMs));
+function jitter(min = MIN_DELAY_MS, max = MAX_DELAY_MS) {
+  return Math.floor(min + Math.random() * (max - min));
 }
 
-function buildProxyAgents() {
+function buildHttpsProxyAgent() {
   const on = process.env.PROXY_ROTATION === 'on' && process.env.FORCE_DIRECT !== '1';
   const host = process.env.PROXY_HOST;
   const port = process.env.PROXY_PORT;
@@ -22,14 +22,14 @@ function buildProxyAgents() {
   if (!on || !host || !port) return undefined;
 
   const auth = user && pass ? `${encodeURIComponent(user)}:${encodeURIComponent(pass)}@` : '';
+  // PROXY **HTTP**, jadi pakai skema http:// (bukan https://)
   const proxyUrl = `http://${auth}${host}:${port}`;
-  return {
-    https: new HttpsProxyAgent(proxyUrl),
-    http: new HttpProxyAgent(proxyUrl)
-  };
+
+  // HttpsProxyAgent akan membuat HTTP CONNECT tunnel untuk target HTTPS
+  return new HttpsProxyAgent(proxyUrl);
 }
 
-/** Convert page URL (?query=...) to the paged-composite-cards API URL */
+/** Ubah URL halaman ke API paged-composite-cards */
 export function toPagedCompositeUrl(inputUrl: string): string {
   try {
     const u = new URL(inputUrl);
@@ -59,31 +59,49 @@ export async function fetchPagedCompositeCards(inputUrl: string) {
   const query = new URL(url).searchParams.get('query') || 'iphone';
   const headers = buildNaverHeaders(query);
 
-  const agents = buildProxyAgents();
+  const httpsAgent = buildHttpsProxyAgent();
 
   const client = got.extend({
-    agent: agents,               // undefined = direct
+    agent: httpsAgent ? { https: httpsAgent } : undefined, // <-- penting: hanya https
     headers,
-    http2: false,                // force HTTP/1.1 (simpler with proxies)
+    http2: false,                // hindari ALPN/H2 dulu
     decompress: true,
     throwHttpErrors: false,
-    timeout: { request: REQUEST_TIMEOUT_MS },
+    timeout: { request: Number(process.env.REQUEST_TIMEOUT_MS ?? 30000) },
     dnsLookupIpVersion: 4 as const
   });
 
   let lastErr: any;
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
-      const res = await client.get(url, { responseType: 'text' }); // Response<string>
-      if ((res.statusCode ?? 0) >= 400) {
-        lastErr = new Error(`HTTP ${res.statusCode}`);
-      } else {
+      // Variasikan UA per attempt kecil2an (hindari set header object baru hard)
+      if (i > 0) {
+        // flip mobile/desktop kecil-kecilan saat retry
+        process.env.NAVER_MOBILE_UA = process.env.NAVER_MOBILE_UA === '1' ? '0' : '1';
+        Object.assign(headers, buildNaverHeaders(query));
+      }
+
+      const res = await client.get(url, { responseType: 'text', headers });
+      const code = res.statusCode ?? 0;
+
+      if (code >= 200 && code < 300) {
         return JSON.parse(res.body);
       }
+
+      // 418/403/429 → anggap anti-bot: tunda lebih lama sebelum retry
+      if ([418, 403, 429].includes(code)) {
+        lastErr = new Error(`HTTP ${code}`);
+        await sleep(jitter(1200, 3500));
+        continue;
+      }
+
+      // Lainnya → retry ringan
+      lastErr = new Error(`HTTP ${code}`);
+      await sleep(jitter());
     } catch (e) {
       lastErr = e;
+      await sleep(jitter());
     }
-    await sleep(jitter());
   }
   throw lastErr ?? new Error('Unknown error');
 }
