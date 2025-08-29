@@ -5,17 +5,19 @@ const app = express();
 
 app.get("/naver", async (req, res) => {
   const { url } = req.query;
-  if (!url) return res.status(400).json({ error: "Missing query param `url`" });
+  if (!url || typeof url !== "string") {
+    return res.status(400).json({ error: "Missing query param `url`" });
+  }
 
   try {
-    const data = await scrapeNaver(String(url));
+    await initCluster();
+    const data = await scrapeNaver(url);
     res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-(async () => {
-  await initCluster();
-  app.listen(3000, () => console.log("API running at http://localhost:3000"));
-})();
+app.listen(3000, () => {
+  console.log("✅ API running at http://localhost:3000");
+});

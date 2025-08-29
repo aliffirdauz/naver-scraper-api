@@ -4,13 +4,16 @@
   "description": "Scalable and undetectable API for scraping Naver Shopping (Coding Challenge)",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node src/server.ts",
+    "dev": "ts-node -r dotenv/config src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "load-test": "ts-node src/load-test.ts"
+    "start": "node -r dotenv/config dist/server.js",
+    "load-test": "ts-node -r dotenv/config src/load-test.ts",
+    "check:proxy": "ts-node scripts/check-proxy.ts"
   },
   "dependencies": {
     "autocannon": "^7.15.0",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
     "express": "^4.19.2",
     "puppeteer": "^22.7.0",
     "puppeteer-cluster": "^0.23.0",
