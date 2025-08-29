@@ -1,0 +1,36 @@
+// utils/naverConfig.ts
+export const NAVER_HEADERS = {
+  "accept": "*/*",
+  "accept-language": "en-US,en;q=0.9",
+  "content-type": "application/json",
+  "dnt": "1",
+  "referer": "https://search.shopping.naver.com/ns/search?query=iphone&score=4.8%7C5",
+  "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36 Edg/139.0.0.0",
+  "sec-ch-ua": `"Not;A=Brand";v="99", "Microsoft Edge";v="139", "Chromium";v="139"`,
+  "sec-ch-ua-arch": "",
+  "sec-ch-ua-bitness": "64",
+  "sec-ch-ua-form-factors": "Desktop",
+  "sec-ch-ua-full-version": "139.0.3405.119",
+  "sec-ch-ua-full-version-list": `"Not;A=Brand";v="99.0.0.0", "Microsoft Edge";v="139.0.3405.119", "Chromium";v="139.0.7258.139"`,
+  "sec-ch-ua-mobile": "?1",
+  "sec-ch-ua-model": `"Nexus 5"`,
+  "sec-ch-ua-platform": "Android",
+  "sec-ch-ua-platform-version": "6.0",
+  "sec-ch-ua-wow64": "?0",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+};
+
+export const NAVER_COOKIES = [
+  { name: "NAC", value: "l2n3BcQFQesiA", domain: ".naver.com" },
+  { name: "nstore_session", value: "EIqwRigKNRfjo29nXqi40vZy", domain: ".naver.com" },
+  { name: "NNB", value: "IHI3QG5SW2VGQ", domain: ".naver.com" },
+  { name: "SHP_BUCKET_ID", value: "2", domain: ".naver.com" },
+  { name: "RELATED_PRODUCT", value: "ON", domain: ".naver.com" },
+  { name: "OEP_CONFIG", value: "[{%22serId%22:%22shopping%22%2C%22type%22:%22oep%22%2C%22expId%22:%22EX-AIB-FIXED%22%2C%22varId%22:%222%22%2C%22value%22:{%22bt%22:%222%22%2C%22aib%22:%220%22%2C%22is_control%22:true}%2C%22userType%22:%22nnb%22%2C%22provId%22:%22%22%2C%22sesnId%22:%22%22}%2C{%22serId%22:%22shopping%22%2C%22type%22:%22oep%22%2C%22expId%22:%22NNS-RANKING%22%2C%22varId%22:%224%22%2C%22value%22:{%22bt%22:%224%22%2C%22is_control%22:false}%2C%22userType%22:%22nnb%22%2C%22provId%22:%22%22%2C%22sesnId%22:%22%22}]", domain: ".naver.com" },
+  { name: "SRT30", value: "1756475928", domain: ".naver.com" },
+  { name: "SRT5", value: "1756475928", domain: ".naver.com" },
+  { name: "X-Wtm-Cpt-Tk", value: "LpZSC_djk28JvQo9METBhLQDGuEB-XREAkVSysDMGnmR52O0OEgO5QfOYriWC1sf0NQPoopK1LpYJ2cmQBEdMVVHTgFz1BOQuLdopbgcNDrBHb8lMW9NHhVCZJDCm9QPb8pTVcveUhK6CoDKS5AXFrZ77LLxEFBDeGJmMsxTVFyUNDZ_tMUwaXUSy90iUC0A-9PsmOm7OjurJ5qyCsaN_BITGTv28I4_SnzucYVufojhtD-9YZ2AMejTBkoVpf0cjwwXUburYa6IOEYUzAtqaZb2yt5LXvpiDmaOcAjY8FxoSGcXLkHN0Af1vS2b09dHg2Hu-DuJz_CyGejaqqcz45hBAIH845C2IgdcR_dUW8sgaR2dwdGUZbk=", domain: ".naver.com" },
+  { name: "nstore_pagesession", value: "j7byddqEyaqellsLDQ0-245342", domain: ".naver.com" },
+];
